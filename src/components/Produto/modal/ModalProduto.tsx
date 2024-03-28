@@ -59,50 +59,54 @@ const ModalProduto: React.FC<ModalProdutoProps> = ({
 
   return (
     <div
-      className="modal"
+      className={`modal ${isOpen ? "show" : ""}`}
       tabIndex={-1}
-      role="dialog"
       style={{ display: isOpen ? "block" : "none" }}
     >
-      <div className="modal-dialog" role="document">
+      <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Criar Novo Produto</h5>
             <button
               type="button"
-              className="close"
+              className="btn-close"
               onClick={onClose}
               aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+            ></button>
           </div>
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="nome">Nome:</label>
+              <div className="mb-3">
+                <label htmlFor="nome" className="form-label">
+                  Nome:
+                </label>
                 <input
                   type="text"
+                  className="form-control"
                   id="nome"
-                  name="nome"
                   value={nome}
                   onChange={handleNomeChange}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="valor">Valor:</label>
+              <div className="mb-3">
+                <label htmlFor="valor" className="form-label">
+                  Valor:
+                </label>
                 <input
-                  type="text"
+                  type="number"
+                  className="form-control"
                   id="valor"
-                  name="valor"
                   value={valor}
                   onChange={handleValorChange}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="disponivel">Disponível:</label>
+              <div className="mb-3">
+                <label htmlFor="disponivel" className="form-label">
+                  Disponível:
+                </label>
                 <select
-                  name="disponivel"
+                  className="form-select"
+                  id="disponivel"
                   value={disponivel ? "true" : "false"}
                   onChange={handleDisponivelChange}
                 >
@@ -110,16 +114,18 @@ const ModalProduto: React.FC<ModalProdutoProps> = ({
                   <option value="false">Indisponível</option>
                 </select>
               </div>
-              <button type="submit" className="btn btn-primary">
-                Salvar
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={onClose}
-              >
-                Fechar
-              </button>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={onClose}
+                >
+                  Fechar
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Salvar
+                </button>
+              </div>
             </form>
           </div>
         </div>

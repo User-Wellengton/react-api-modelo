@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Produto } from "../../interfaces/Produto/Produto";
-import ProdutoService from "../../services/ProductService";
+
 import "./ProdutoListar.css";
 import ModalProduto from "./modal/ModalProduto";
+import ModalProdutoDelete from "./modal/ModalProdutoDelete";
+import produtoService from "../../services/ProductService";
 
 const ProdutoListar: React.FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [modalExclusaoAberta, setModalExclusaoAberta] = useState(false);
+  const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(
+    null
+  );
   const [modalAberta, setModalAberta] = useState(false);
 
   useEffect(() => {
@@ -14,10 +20,32 @@ const ProdutoListar: React.FC = () => {
 
   const recarregarProdutos = async () => {
     try {
-      const produtos = await ProdutoService.getAll();
+      const produtos = await produtoService.getAll();
       setProdutos(produtos);
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
+    }
+  };
+
+  const abrirModalExclusao = (produto: Produto) => {
+    setProdutoSelecionado(produto);
+    setModalExclusaoAberta(true);
+  };
+
+  const fecharModalExclusao = () => {
+    setProdutoSelecionado(null);
+    setModalExclusaoAberta(false);
+  };
+
+  const handleConfirmarExclusao = async () => {
+    if (produtoSelecionado) {
+      try {
+        await produtoService.excluirProduto(produtoSelecionado.id.toString());
+        await recarregarProdutos();
+        fecharModalExclusao();
+      } catch (error) {
+        console.error("Erro ao excluir produto:", error);
+      }
     }
   };
 
@@ -62,7 +90,12 @@ const ProdutoListar: React.FC = () => {
               <td>{produto.disponivel ? "Disponível" : "Indisponível"}</td>
               <td>
                 <button className=" btn btn-primary">Editar</button>
-                <button className=" btn btn-danger">Excluir</button>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => abrirModalExclusao(produto)}
+                >
+                  Excluir
+                </button>
               </td>
             </tr>
           ))}
@@ -73,6 +106,12 @@ const ProdutoListar: React.FC = () => {
         onClose={fecharModal}
         onProdutoCadastrado={handleProdutoCadastrado}
         recarregarProdutos={recarregarProdutos}
+      />
+      <ModalProdutoDelete
+        isOpen={modalExclusaoAberta}
+        onClose={fecharModalExclusao}
+        produto={produtoSelecionado || undefined}
+        onConfirm={handleConfirmarExclusao}
       />
     </div>
   );

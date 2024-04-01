@@ -1,6 +1,15 @@
 import { Produto } from "../interfaces/Produto/Produto";
 import ServiceBase from "./ServiceBase";
 
-const ProdutoService = new ServiceBase<Produto>("Produto");
+class ProdutoService extends ServiceBase<Produto> {
+  constructor() {
+    super("Produto");
+  }
 
-export default ProdutoService;
+  async excluirProduto(id: string): Promise<void> {
+    await this.delete(id);
+  }
+}
+
+const produtoService = new ProdutoService();
+export default produtoService;

@@ -5,10 +5,6 @@ class ProdutoService extends ServiceBase<Produto> {
   constructor() {
     super("Produto");
   }
-
-  async excluirProduto(id: string): Promise<void> {
-    await this.delete(id);
-  }
 }
 
 const produtoService = new ProdutoService();

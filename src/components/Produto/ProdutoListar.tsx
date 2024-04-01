@@ -43,7 +43,7 @@ const ProdutoListar: React.FC = () => {
   const handleConfirmarExclusao = async () => {
     if (produtoSelecionado) {
       try {
-        await produtoService.excluirProduto(produtoSelecionado.id.toString());
+        await produtoService.delete(produtoSelecionado.id.toString());
         await recarregarProdutos();
         fecharModalExclusao();
       } catch (error) {

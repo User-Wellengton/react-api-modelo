@@ -94,41 +94,45 @@ const ProdutoListar: React.FC = () => {
           Cadastrar
         </button>
       </header>
-      <table className="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Nome</th>
-            <th scope="col">Valor</th>
-            <th scope="col">Disponivel</th>
-            <th scope="col">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {produtos.map((produto) => (
-            <tr key={produto.id}>
-              <td>{produto.id}</td>
-              <td>{produto.nome}</td>
-              <td>R${produto.valor}</td>
-              <td>{produto.disponivel ? "Disponível" : "Indisponível"}</td>
-              <td>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => abrirModalEdicao(produto)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => abrirModalExclusao(produto)}
-                >
-                  Excluir
-                </button>
-              </td>
+      {produtos.length > 0 ? (
+        <table className="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Nome</th>
+              <th scope="col">Valor</th>
+              <th scope="col">Disponivel</th>
+              <th scope="col">Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {produtos.map((produto) => (
+              <tr key={produto.id}>
+                <td>{produto.id}</td>
+                <td>{produto.nome}</td>
+                <td>R${produto.valor}</td>
+                <td>{produto.disponivel ? "Disponível" : "Indisponível"}</td>
+                <td>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => abrirModalEdicao(produto)}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => abrirModalExclusao(produto)}
+                  >
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>Nenhum produto encontrado.</p>
+      )}
       <ModalProduto
         isOpen={modalAberta}
         onClose={fecharModal}

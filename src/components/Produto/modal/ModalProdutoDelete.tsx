@@ -1,8 +1,4 @@
-import { Produto } from "../../../interfaces/Produto/Produto";
-import {
-  ConfirmDeleteModal,
-  ProdutoModal,
-} from "../../../interfaces/Produto/ProdutoModal";
+import { ConfirmDeleteModal } from "../../../interfaces/Produto/ProdutoModalDelete";
 
 const ModalProdutoDelete: React.FC<ConfirmDeleteModal> = ({
   isOpen,

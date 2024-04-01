@@ -5,6 +5,7 @@ import "./ProdutoListar.css";
 import ModalProduto from "./modal/ModalProduto";
 import ModalProdutoDelete from "./modal/ModalProdutoDelete";
 import produtoService from "../../services/ProductService";
+import ModalProdutoEdit from "./modal/ModalProdutoEdit";
 
 const ProdutoListar: React.FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
@@ -13,6 +14,8 @@ const ProdutoListar: React.FC = () => {
     null
   );
   const [modalAberta, setModalAberta] = useState(false);
+  const [modalEdicaoAberta, setModalEdicaoAberta] = useState(false);
+  const [produtoEditado, setProdutoEditado] = useState<Produto | null>(null);
 
   useEffect(() => {
     recarregarProdutos();
@@ -57,6 +60,26 @@ const ProdutoListar: React.FC = () => {
     setModalAberta(false);
   };
 
+  const abrirModalEdicao = (produto: Produto) => {
+    setProdutoEditado(produto);
+    setModalEdicaoAberta(true);
+  };
+
+  const fecharModalEdicao = () => {
+    setProdutoEditado(null);
+    setModalEdicaoAberta(false);
+  };
+
+  const handleProdutoEditado = async (produto: Produto) => {
+    try {
+      await produtoService.update(produto.id.toString(), produto);
+      await recarregarProdutos();
+      fecharModalEdicao();
+    } catch (error) {
+      console.error("Erro ao editar produto:", error);
+    }
+  };
+
   const handleProdutoCadastrado = async (produto: Produto) => {
     setProdutos((prevProdutos) => [...prevProdutos, produto]);
 
@@ -89,7 +112,12 @@ const ProdutoListar: React.FC = () => {
               <td>R${produto.valor}</td>
               <td>{produto.disponivel ? "Disponível" : "Indisponível"}</td>
               <td>
-                <button className=" btn btn-primary">Editar</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => abrirModalEdicao(produto)}
+                >
+                  Editar
+                </button>
                 <button
                   className="btn btn-danger"
                   onClick={() => abrirModalExclusao(produto)}
@@ -112,6 +140,12 @@ const ProdutoListar: React.FC = () => {
         onClose={fecharModalExclusao}
         produto={produtoSelecionado || undefined}
         onConfirm={handleConfirmarExclusao}
+      />
+      <ModalProdutoEdit
+        isOpen={modalEdicaoAberta}
+        onClose={fecharModalEdicao}
+        produto={produtoEditado}
+        onProdutoEditado={handleProdutoEditado}
       />
     </div>
   );

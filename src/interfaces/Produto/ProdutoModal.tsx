@@ -5,9 +5,3 @@ export interface ProdutoModal {
   onClose: () => void;
   onProdutoCadastrado?: (produto: Produto) => void;
 }
-
-export interface ConfirmDeleteModal extends ProdutoModal {
-  onConfirm: () => void;
-  produto?: Produto;
-  onProdutoCadastrado?: (produto: Produto) => void;
-}

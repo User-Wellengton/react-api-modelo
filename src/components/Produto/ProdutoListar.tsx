@@ -90,9 +90,27 @@ const ProdutoListar: React.FC = () => {
     <div className="produto-Container">
       <h3>Cadastro de Produtos</h3>
       <header className="header">
-        <button className="btn btn-success" onClick={abrirModal}>
-          Cadastrar
-        </button>
+        <div>
+          <button className="btn btn-success" onClick={abrirModal}>
+            Cadastrar
+          </button>
+        </div>
+        <div className="botao_pesquisa">
+          <form className="form-inline">
+            <input
+              className="form-control mr-sm-2"
+              type="search"
+              placeholder="Pesquisar"
+              aria-label="Pesquisar"
+            />
+            <button
+              className="btn btn-outline-success my-2 my-sm-0"
+              type="submit"
+            >
+              Pesquisar
+            </button>
+          </form>
+        </div>
       </header>
       {produtos.length > 0 ? (
         <table className="table table-striped table-hover">

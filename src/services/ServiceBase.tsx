@@ -20,6 +20,13 @@ export default class ServiceBase<T> {
     return response.data;
   };
 
+  getName = async (name: string): Promise<T> => {
+    const response: AxiosResponse<T> = await Api.get(
+      `/${this.resource}?name=${name}`
+    );
+    return response.data;
+  };
+
   create = async (item: T): Promise<T> => {
     const response: AxiosResponse<T> = await Api.post(
       `/${this.resource}`,

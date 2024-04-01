@@ -7,9 +7,8 @@
 
 .produto-Container header {
   display: flex;
-  align-items: center;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .produto-container {
@@ -31,6 +30,16 @@
 
 .table td button {
   margin-right: 5px;
+}
+
+.botao_pesquisa form {
+  display: flex;
+  align-items: center;
+}
+
+.botao_pesquisa form input,
+.botao_pesquisa form button {
+  margin-right: 10px;
 }
 
 table,

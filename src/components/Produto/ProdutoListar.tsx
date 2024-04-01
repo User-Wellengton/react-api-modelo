@@ -16,6 +16,7 @@ const ProdutoListar: React.FC = () => {
   const [modalAberta, setModalAberta] = useState(false);
   const [modalEdicaoAberta, setModalEdicaoAberta] = useState(false);
   const [produtoEditado, setProdutoEditado] = useState<Produto | null>(null);
+  const [nomePesquisado, setNomePesquisado] = useState("");
 
   useEffect(() => {
     recarregarProdutos();
@@ -86,6 +87,24 @@ const ProdutoListar: React.FC = () => {
     await recarregarProdutos();
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (nomePesquisado.trim() === "") {
+      console.log("Nome do produto não pode estar vazio.");
+      return;
+    }
+    try {
+      const produtoPesquisado = await produtoService.getName(nomePesquisado);
+      if (produtoPesquisado) {
+        setProdutos([produtoPesquisado]);
+      } else {
+        console.log("Nenhum produto encontrado.");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+    }
+  };
+
   return (
     <div className="produto-Container">
       <h3>Cadastro de Produtos</h3>
@@ -96,12 +115,14 @@ const ProdutoListar: React.FC = () => {
           </button>
         </div>
         <div className="botao_pesquisa">
-          <form className="form-inline">
+          <form className="form-inline" onSubmit={handleSubmit}>
             <input
               className="form-control mr-sm-2"
               type="search"
               placeholder="Pesquisar"
               aria-label="Pesquisar"
+              value={nomePesquisado}
+              onChange={(e) => setNomePesquisado(e.target.value)}
             />
             <button
               className="btn btn-outline-success my-2 my-sm-0"

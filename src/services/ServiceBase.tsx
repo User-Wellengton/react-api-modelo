@@ -22,7 +22,7 @@ export default class ServiceBase<T> {
 
   getName = async (name: string): Promise<T> => {
     const response: AxiosResponse<T> = await Api.get(
-      `/${this.resource}/nome/${name}`
+      `/${this.resource}/${name}`
     );
     console.log(response, "endpoint");
     return response.data;

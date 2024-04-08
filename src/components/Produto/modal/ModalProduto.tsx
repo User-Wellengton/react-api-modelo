@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ProdutoModal } from "../../../interfaces/Produto/ProdutoModal";
 import { Produto } from "../../../interfaces/Produto/Produto";
 import ServiceBase from "../../../services/ServiceBase";
+import { toast, Bounce } from "react-toastify";
 
 interface ModalProdutoProps extends ProdutoModal {
   recarregarProdutos: () => void;
@@ -52,8 +53,30 @@ const ModalProduto: React.FC<ModalProdutoProps> = ({
       onClose();
       limparCampos();
       recarregarProdutos();
+      toast.success("Produto criado com SUCESSO!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } catch (error) {
       console.error("Erro ao cadastrar produto:", error);
+      toast.error("Ocorreu um erro ao criar o Produto", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 

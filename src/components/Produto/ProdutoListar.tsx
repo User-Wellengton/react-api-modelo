@@ -6,6 +6,7 @@ import ModalProduto from "./modal/ModalProduto";
 import ModalProdutoDelete from "./modal/ModalProdutoDelete";
 import produtoService from "../../services/ProductService";
 import ModalProdutoEdit from "./modal/ModalProdutoEdit";
+import { toast, Bounce } from "react-toastify";
 
 const ProdutoListar: React.FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
@@ -47,8 +48,32 @@ const ProdutoListar: React.FC = () => {
         await produtoService.delete(produtoSelecionado.id.toString());
         await recarregarProdutos();
         fecharModalExclusao();
+
+        toast.success("Produto excluído com SUCESSO!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       } catch (error) {
         console.error("Erro ao excluir produto:", error);
+
+        toast.error("Ocorreu um erro ao excluir o Produto", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     }
   };
@@ -76,8 +101,32 @@ const ProdutoListar: React.FC = () => {
       await produtoService.update(produto.id.toString(), produto);
       await recarregarProdutos();
       fecharModalEdicao();
+
+      toast.success("Produto atualizado com SUCESSO!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } catch (error) {
       console.error("Erro ao editar produto:", error);
+
+      toast.error("Ocorreu um erro ao atualizar o Produto", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 

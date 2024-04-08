@@ -1,11 +1,14 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "react-toastify/dist/ReactToastify.css";
+
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ProdutoListar from "./components/Produto/ProdutoListar";
 import Navbar from "./components/NavBar/Navbar";
 import Home from "./components/Home/Home";
+import { ToastContainer } from "react-toastify";
 
 const App: React.FC = function () {
   return (
@@ -15,6 +18,7 @@ const App: React.FC = function () {
         <Route path="/" element={<Home />} />
         <Route path="/Produto" element={<ProdutoListar />} />
       </Routes>
+      <ToastContainer />
     </Router>
   );
 };

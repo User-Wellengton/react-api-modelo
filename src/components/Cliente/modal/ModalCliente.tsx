@@ -1,59 +1,68 @@
 import React, { useState } from "react";
-import { ProdutoModal } from "../../../interfaces/Produto/ProdutoModal";
-import { Produto } from "../../../interfaces/Produto/Produto";
+import { ClienteModal } from "../../../interfaces/Cliente/ClienteModal";
+import { Cliente } from "../../../interfaces/Cliente/Cliente";
 import ServiceBase from "../../../services/ServiceBase";
 import { toast, Bounce } from "react-toastify";
 
-interface ModalProdutoProps extends ProdutoModal {
-  recarregarProdutos: () => void;
+interface ModalClienteProps extends ClienteModal {
+  recarregarClientes: () => void;
 }
 
-const ModalProduto: React.FC<ModalProdutoProps> = ({
+const ModalCliente: React.FC<ModalClienteProps> = ({
   isOpen,
   onClose,
-  recarregarProdutos,
+  recarregarClientes,
 }) => {
+  const [id, setId] = useState<number | undefined>(undefined);
   const [nome, setNome] = useState("");
-  const [valor, setValor] = useState("");
-  const [disponivel, setDisponivel] = useState(true);
+  const [sobrenome, setSobrenome] = useState("");
+  const [email, setEmail] = useState("");
+  const [ativo, setAtivo] = useState(false);
 
   if (!isOpen) return null;
 
   const limparCampos = () => {
     setNome("");
-    setValor("");
-    setDisponivel(true);
+    setNome("");
+    setSobrenome("");
+    setEmail("");
+    setAtivo(true);
   };
 
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNome(event.target.value);
   };
 
-  const handleValorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValor(event.target.value);
+  const handleSobrenomeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSobrenome(event.target.value);
   };
 
-  const handleDisponivelChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setDisponivel(event.target.value === "true");
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+
+  const handleAtivoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setAtivo(event.target.value === "true");
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const novoProduto: Produto = {
+    const novoCliente: Cliente = {
       id: 0,
       nome,
-      valor: parseFloat(valor),
-      disponivel,
+      sobrenome,
+      email,
+      ativo,
     };
     try {
-      const service = new ServiceBase<Produto>("Produto");
-      await service.create(novoProduto);
+      const service = new ServiceBase<Cliente>("Cliente");
+      await service.create(novoCliente);
       onClose();
       limparCampos();
-      recarregarProdutos();
-      toast.success("Produto criado com SUCESSO!", {
+      recarregarClientes();
+      toast.success("Cliente criado com SUCESSO!", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -65,8 +74,8 @@ const ModalProduto: React.FC<ModalProdutoProps> = ({
         transition: Bounce,
       });
     } catch (error) {
-      console.error("Erro ao cadastrar produto:", error);
-      toast.error("Ocorreu um erro ao criar o Produto", {
+      console.error("Erro ao cadastrar cliente:", error);
+      toast.error("Ocorreu um erro ao criar o Cliente", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -89,7 +98,7 @@ const ModalProduto: React.FC<ModalProdutoProps> = ({
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Criar Novo Produto</h5>
+            <h5 className="modal-title">Criar Novo Cliente</h5>
             <button
               type="button"
               className="btn-close"
@@ -111,30 +120,43 @@ const ModalProduto: React.FC<ModalProdutoProps> = ({
                   onChange={handleNomeChange}
                 />
               </div>
+
               <div className="mb-3">
-                <label htmlFor="valor" className="form-label">
-                  Valor:
+                <label htmlFor="sobrenome" className="form-label">
+                  Sobrenome:
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   className="form-control"
-                  id="valor"
-                  value={valor}
-                  onChange={handleValorChange}
+                  id="sobrenome"
+                  value={sobrenome}
+                  onChange={handleSobrenomeChange}
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="disponivel" className="form-label">
-                  Disponível:
+                <label htmlFor="email" className="form-label">
+                  Email:
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="ativo" className="form-label">
+                  Ativo:
                 </label>
                 <select
                   className="form-select"
-                  id="disponivel"
-                  value={disponivel ? "true" : "false"}
-                  onChange={handleDisponivelChange}
+                  id="ativo"
+                  value={ativo ? "true" : "false"}
+                  onChange={handleAtivoChange}
                 >
-                  <option value="true">Disponível</option>
-                  <option value="false">Indisponível</option>
+                  <option value="true">Ativo</option>
+                  <option value="false">Inativo</option>
                 </select>
               </div>
               <div className="modal-footer">
@@ -157,4 +179,4 @@ const ModalProduto: React.FC<ModalProdutoProps> = ({
   );
 };
 
-export default ModalProduto;
+export default ModalCliente;

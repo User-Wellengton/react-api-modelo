@@ -47,6 +47,13 @@ const ModalCliente: React.FC<ModalClienteProps> = ({
     setAtivo(event.target.value === "true");
   };
 
+  const validarCliente = (cliente: Cliente) => {
+    const { nome, sobrenome, email, ativo } = cliente;
+    if (!nome || !sobrenome || !email || ativo === null) {
+      throw new Error("Todos os campos devem ser preenchidos");
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const novoCliente: Cliente = {
@@ -57,6 +64,7 @@ const ModalCliente: React.FC<ModalClienteProps> = ({
       ativo,
     };
     try {
+      validarCliente(novoCliente);
       const service = new ServiceBase<Cliente>("Cliente");
       await service.create(novoCliente);
       onClose();

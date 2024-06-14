@@ -197,7 +197,8 @@ const ClienteListar: React.FC = () => {
               <tr key={cliente.id}>
                 <td>{cliente.id}</td>
                 <td>
-                  {cliente.nome} {cliente.sobrenome}
+                  {cliente.nome}
+                  {cliente.sobrenome}
                 </td>
                 <td>{cliente.email}</td>
                 <td>{cliente.ativo ? "Ativo" : "Inativo"}</td>

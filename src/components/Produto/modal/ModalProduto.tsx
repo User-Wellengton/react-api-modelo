@@ -39,6 +39,13 @@ const ModalProduto: React.FC<ModalProdutoProps> = ({
     setDisponivel(event.target.value === "true");
   };
 
+  const validarProduto = (produto: Produto) => {
+    const { nome, valor, disponivel } = produto;
+    if (!nome || valor === null || disponivel === null) {
+      throw new Error("Todos os campos devem ser preenchidos");
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const novoProduto: Produto = {
@@ -48,6 +55,7 @@ const ModalProduto: React.FC<ModalProdutoProps> = ({
       disponivel,
     };
     try {
+      validarProduto(novoProduto);
       const service = new ServiceBase<Produto>("Produto");
       await service.create(novoProduto);
       onClose();

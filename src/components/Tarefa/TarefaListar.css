@@ -1,0 +1,51 @@
+.tarefa-Container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 5 10px;
+  margin: 30px auto;
+}
+
+.tarefa-Container header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.tarefa-container {
+  height: 50px;
+  width: 200px;
+  border-radius: 5px;
+  background: green;
+  margin-left: 16px;
+  transition: border-color 0.5s;
+}
+
+.tarefa-container header button:hover {
+  border-color: blueviolet;
+}
+
+.header button {
+  margin-bottom: 10px;
+}
+
+.table td button {
+  margin-right: 5px;
+}
+
+.botao_pesquisa form {
+  display: flex;
+  align-items: center;
+}
+
+.botao_pesquisa form input,
+.botao_pesquisa form button {
+  margin-right: 10px;
+}
+
+table,
+th,
+td {
+  padding: 20px;
+  text-align: left;
+  text-align: center;
+}

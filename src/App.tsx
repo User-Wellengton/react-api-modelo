@@ -10,6 +10,7 @@ import Navbar from "./components/NavBar/Navbar";
 import Home from "./components/Home/Home";
 import { ToastContainer } from "react-toastify";
 import ClienteListar from "./components/Cliente/ClienteListar";
+import TarefaListar from "./components/Tarefa/TarefaListar";
 
 const App: React.FC = function () {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = function () {
         <Route path="/" element={<Home />} />
         <Route path="/Produto" element={<ProdutoListar />} />
         <Route path="/Cliente" element={<ClienteListar />} />
+        <Route path="/Tarefa" element={<TarefaListar />} />
       </Routes>
       <ToastContainer />
     </Router>

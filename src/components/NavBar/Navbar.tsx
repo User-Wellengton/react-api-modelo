@@ -19,6 +19,11 @@ const Navbar: React.FC = () => {
                 Cliente
               </a>
             </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/Tarefa">
+                Tarefa
+              </a>
+            </li>
           </ul>
         </div>
       </div>

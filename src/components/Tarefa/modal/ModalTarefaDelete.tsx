@@ -1,12 +1,12 @@
-import { ConfirmDeleteModal } from "../../../interfaces/Produto/ProdutoModalDelete";
+import { ConfirmDeleteModal } from "../../../interfaces/Tarefa/TarefaModalDelete";
 
-const ModalProdutoDelete: React.FC<ConfirmDeleteModal> = ({
+const ModalTarefaDelete: React.FC<ConfirmDeleteModal> = ({
   isOpen,
   onClose,
-  produto,
+  tarefa,
   onConfirm,
 }) => {
-  if (!produto) {
+  if (!tarefa) {
     return null;
   }
 
@@ -29,7 +29,7 @@ const ModalProdutoDelete: React.FC<ConfirmDeleteModal> = ({
             ></button>
           </div>
           <div className="modal-body">
-            <p>Tem certeza que deseja excluir o produto {produto.nome}?</p>
+            <p>Tem certeza que deseja excluir a tarefa {tarefa.nomeTarefa}?</p>
           </div>
           <div className="modal-footer">
             <button
@@ -56,4 +56,4 @@ const ModalProdutoDelete: React.FC<ConfirmDeleteModal> = ({
   );
 };
 
-export default ModalProdutoDelete;
+export default ModalTarefaDelete;

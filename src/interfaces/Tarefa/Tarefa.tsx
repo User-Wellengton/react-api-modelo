@@ -4,7 +4,7 @@ export interface Tarefa {
   nomeTarefa: string;
   descricao: string;
   dataInicial: Date;
-  DataEntrega: Date;
+  dataEntrega: Date;
   prioridade: number;
   status: number;
 }

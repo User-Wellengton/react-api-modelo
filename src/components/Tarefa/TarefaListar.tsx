@@ -8,6 +8,21 @@ import tarefaService from "../../services/TarefaService";
 import ModalTarefaEdit from "./modal/ModalTarefaEdit";
 import { toast, Bounce } from "react-toastify";
 
+function getStatus(status: number) {
+  switch (status) {
+    case 1:
+      return "To Do";
+    case 2:
+      return "Em Progresso";
+    case 3:
+      return "Bloqueado";
+    case 4:
+      return "Completo";
+    default:
+      return "Status desconhecido";
+  }
+}
+
 const TarefaListar: React.FC = () => {
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [modalExclusaoAberta, setModalExclusaoAberta] = useState(false);
@@ -204,10 +219,10 @@ const TarefaListar: React.FC = () => {
                   {new Date(tarefa.dataInicial).toLocaleDateString("pt-BR")}
                 </td>
                 <td>
-                  {new Date(tarefa.DataEntrega).toLocaleDateString("pt-BR")}
+                  {new Date(tarefa.dataEntrega).toLocaleDateString("pt-BR")}
                 </td>
                 <td>{tarefa.prioridade}</td>
-                <td>{tarefa.status}</td>
+                <td>{getStatus(tarefa.status)}</td>
 
                 <td>
                   <button

@@ -16,6 +16,9 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
   const [nomeProjeto, setNomeProjeto] = useState("");
   const [nomeTarefa, setNomeTarefa] = useState("");
   const [prioridade, setPrioridade] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [dataInicial, setDataInicial] = useState("");
+  const [dataEntrega, setDataEntrega] = useState("");
   const [status, setStatus] = useState("");
 
   if (!isOpen) return null;
@@ -23,6 +26,9 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
   const limparCampos = () => {
     setNomeProjeto("");
     setNomeTarefa("");
+    setDescricao("");
+    setDataInicial("");
+    setDataEntrega("");
     setPrioridade("");
     setStatus("");
   };
@@ -39,6 +45,24 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
     setNomeTarefa(event.target.value);
   };
 
+  const handleDataInicialChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setDataInicial(event.target.value);
+  };
+
+  const handleDataEntregaChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setDataEntrega(event.target.value);
+  };
+
+  const handleDescricaoChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setDescricao(event.target.value);
+  };
+
   const handlePrioridadeChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -50,10 +74,34 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
   };
 
   const validarTarefa = (tarefa: Tarefa) => {
-    const { nomeProjeto, nomeTarefa, prioridade, status } = tarefa;
-    if (!nomeProjeto || nomeTarefa || prioridade === null || status === null) {
-      throw new Error("Todos os campos devem ser preenchidos");
+    const {
+      nomeProjeto,
+      nomeTarefa,
+      dataInicial,
+      dataEntrega,
+      prioridade,
+      status,
+      descricao,
+    } = tarefa;
+
+    const dataIni = new Date(dataInicial);
+    const dataEnt = new Date(dataEntrega);
+
+    if (
+      !nomeProjeto ||
+      !nomeTarefa ||
+      !dataInicial ||
+      !dataEntrega ||
+      !prioridade ||
+      !status ||
+      !descricao
+    ) {
+      return "Todos os campos devem ser preenchidos.";
+    } else if (dataEnt < dataIni) {
+      return "A data de entrega não pode ser anterior à data inicial.";
     }
+
+    return null;
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -62,9 +110,29 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
       id: 0,
       nomeProjeto,
       nomeTarefa,
+      dataInicial: new Date(dataInicial),
+      dataEntrega: new Date(dataEntrega),
       prioridade: parseFloat(prioridade),
       status: parseFloat(status),
+      descricao,
     };
+
+    const mensagemErro = validarTarefa(novaTarefa);
+    if (mensagemErro) {
+      toast.error(mensagemErro, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
     try {
       validarTarefa(novaTarefa);
       const service = new ServiceBase<Tarefa>("Tarefa");
@@ -144,38 +212,85 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
                 />
               </div>
 
-              <div className="mb-3">
-                <label htmlFor="prioridade" className="form-label">
-                  Príoridade:
-                </label>
-                <select
-                  className="form-select"
-                  id="disponivel"
-                  value={prioridade}
-                  onChange={handlePrioridadeChange}
-                >
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
+              <div className="mb-3 d-flex justify-content-between">
+                <div className="flex-fill mr-1">
+                  <label htmlFor="dataInicial" className="form-label">
+                    Data Inicial:
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="dataInicial"
+                    name="dataInicial"
+                    value={dataInicial}
+                    onChange={handleDataInicialChange}
+                  />
+                </div>
+                <div className="flex-fill ml-1">
+                  <label htmlFor="dataEntrega" className="form-label">
+                    Data de Entrega:
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="dataEntrega"
+                    name="dataEntrega"
+                    value={dataEntrega}
+                    onChange={handleDataEntregaChange}
+                  />
+                </div>
+              </div>
+
+              <div className="mb-3 d-flex justify-content-between">
+                <div className="flex-fill mr-1">
+                  <label htmlFor="prioridade" className="form-label">
+                    Príoridade:
+                  </label>
+                  <select
+                    className="form-select"
+                    id="prioridade"
+                    value={prioridade}
+                    onChange={handlePrioridadeChange}
+                  >
+                    <option>Escolha uma opção</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+
+                <div className="flex-fill ml-1">
+                  <label htmlFor="status" className="form-label">
+                    Status:
+                  </label>
+                  <select
+                    className="form-select"
+                    id="status"
+                    value={status}
+                    onChange={handleStatusChange}
+                  >
+                    <option>Escolha uma opção</option>
+                    <option value="1">To Do</option>
+                    <option value="2">Em Progresso</option>
+                    <option value="3">Bloqueado</option>
+                    <option value="4">Completo</option>
+                  </select>
+                </div>
               </div>
 
               <div className="mb-3">
-                <label htmlFor="status" className="form-label">
-                  Status:
+                <label htmlFor="descricao" className="form-label">
+                  Descrição:
                 </label>
-                <select
-                  className="form-select"
-                  id="disponivel"
-                  value={status}
-                  onChange={handleStatusChange}
-                >
-                  <option value="0">Em Progresso</option>
-                  <option value="1">Bloqueado</option>
-                  <option value="3">Completo</option>
-                </select>
+                <textarea
+                  className="form-control"
+                  id="descricao"
+                  value={descricao}
+                  onChange={handleDescricaoChange}
+                  rows={8}
+                ></textarea>
               </div>
 
               <div className="modal-footer">

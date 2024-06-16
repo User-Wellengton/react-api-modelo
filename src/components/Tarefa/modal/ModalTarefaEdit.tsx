@@ -1,57 +1,104 @@
 import React, { useState, useEffect } from "react";
-import { Produto } from "../../../interfaces/Produto/Produto";
+import { Tarefa } from "../../../interfaces/Tarefa/Tarefa";
+import { toast } from "react-toastify";
 
-interface ModalProdutoEditProps {
+interface ModalTarefaEditProps {
   isOpen: boolean;
   onClose: () => void;
-  produto: Produto | null;
-  onProdutoEditado: (produto: Produto) => void;
+  tarefa: Tarefa | null;
+  onTarefaEditado: (tarefa: Tarefa) => void;
 }
 
-const ModalProdutoEdit: React.FC<ModalProdutoEditProps> = ({
+const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
   isOpen,
   onClose,
-  produto,
-  onProdutoEditado,
+  tarefa,
+  onTarefaEditado,
 }) => {
   const [id, setId] = useState<number | undefined>(undefined);
-  const [nome, setNome] = useState("");
-  const [valor, setValor] = useState("");
-  const [disponivel, setDisponivel] = useState(false);
+  const [nomeProjeto, setNomeProjeto] = useState("");
+  const [nomeTarefa, setNomeTarefa] = useState("");
+  const [prioridade, setPrioridade] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [dataInicial, setDataInicial] = useState("");
+  const [dataEntrega, setDataEntrega] = useState("");
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
-    if (produto) {
-      setId(produto.id);
-      setNome(produto.nome);
-      setValor(produto.valor.toString());
-      setDisponivel(produto.disponivel);
+    if (tarefa) {
+      setId(tarefa.id);
+      setNomeProjeto(tarefa.nomeProjeto);
+      setNomeTarefa(tarefa.nomeTarefa);
+      setDataInicial(tarefa.dataInicial.toString().substring(0, 10));
+      setDataEntrega(tarefa.dataEntrega.toString().substring(0, 10));
+      setPrioridade(tarefa.prioridade.toString());
+      setStatus(tarefa.status.toString());
+      setDescricao(tarefa.descricao);
     }
-  }, [produto]);
+  }, [tarefa]);
 
-  const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNome(event.target.value);
+  const handleNomeProjetoChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setNomeProjeto(event.target.value);
   };
 
-  const handleValorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValor(event.target.value);
+  const handleNomeTarefaChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setNomeTarefa(event.target.value);
   };
 
-  const handleDisponivelChange = (
+  const handleDataInicialChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setDataInicial(event.target.value);
+  };
+
+  const handleDataEntregaChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setDataEntrega(event.target.value);
+  };
+
+  const handleDescricaoChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setDescricao(event.target.value);
+  };
+
+  const handlePrioridadeChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setDisponivel(event.target.value === "true");
+    setPrioridade(event.target.value);
+  };
+
+  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatus(event.target.value);
   };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (produto) {
-      const produtoEditado: Produto = {
-        ...produto,
-        nome: nome,
-        valor: parseFloat(valor),
-        disponivel: disponivel,
+    const dataIni = new Date(dataInicial);
+    const dataEnt = new Date(dataEntrega);
+
+    if (dataEnt < dataIni) {
+      toast.error("A data de entrega não pode ser anterior à data de início.");
+      return;
+    }
+
+    if (tarefa) {
+      const tarefaEditada: Tarefa = {
+        ...tarefa,
+        nomeProjeto: nomeProjeto,
+        nomeTarefa: nomeTarefa,
+        dataInicial: dataIni,
+        dataEntrega: dataEnt,
+        prioridade: parseFloat(prioridade),
+        status: parseFloat(status),
+        descricao: descricao,
       };
-      onProdutoEditado(produtoEditado);
+      onTarefaEditado(tarefaEditada);
     }
   };
 
@@ -65,7 +112,7 @@ const ModalProdutoEdit: React.FC<ModalProdutoEditProps> = ({
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Editar Produto</h5>
+            <h5 className="modal-title">Editar Tarefa</h5>
             <button
               type="button"
               className="btn-close"
@@ -87,44 +134,114 @@ const ModalProdutoEdit: React.FC<ModalProdutoEditProps> = ({
                   readOnly
                 />
               </div>
+
               <div className="mb-3">
-                <label htmlFor="nome" className="form-label">
-                  Nome:
+                <label htmlFor="nomeProjeto" className="form-label">
+                  Nome Projeto:
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  id="nome"
-                  value={nome}
-                  onChange={handleNomeChange}
+                  id="nomeProjeto"
+                  value={nomeProjeto}
+                  onChange={handleNomeProjetoChange}
                 />
               </div>
+
               <div className="mb-3">
-                <label htmlFor="valor" className="form-label">
-                  Valor:
+                <label htmlFor="nomeTarefa" className="form-label">
+                  Nome Tarefa:
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   className="form-control"
-                  id="valor"
-                  value={valor}
-                  onChange={handleValorChange}
+                  id="nomeTarefa"
+                  value={nomeTarefa}
+                  onChange={handleNomeTarefaChange}
                 />
               </div>
-              <div className="mb-3">
-                <label htmlFor="disponivel" className="form-label">
-                  Disponível:
-                </label>
-                <select
-                  className="form-select"
-                  id="disponivel"
-                  value={disponivel ? "true" : "false"}
-                  onChange={handleDisponivelChange}
-                >
-                  <option value="true">Disponível</option>
-                  <option value="false">Indisponível</option>
-                </select>
+
+              <div className="mb-3 d-flex justify-content-between">
+                <div className="flex-fill mr-1">
+                  <label htmlFor="dataInicial" className="form-label">
+                    Data Inicial:
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="dataInicial"
+                    name="dataInicial"
+                    value={dataInicial}
+                    onChange={handleDataInicialChange}
+                  />
+                </div>
+                <div className="flex-fill ml-1">
+                  <label htmlFor="dataEntrega" className="form-label">
+                    Data de Entrega:
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="dataEntrega"
+                    name="dataEntrega"
+                    value={dataEntrega}
+                    onChange={handleDataEntregaChange}
+                  />
+                </div>
               </div>
+
+              <div className="mb-3 d-flex justify-content-between">
+                <div className="flex-fill mr-1">
+                  <label htmlFor="prioridade" className="form-label">
+                    Príoridade:
+                  </label>
+                  <select
+                    className="form-select"
+                    id="prioridade"
+                    value={prioridade}
+                    onChange={handlePrioridadeChange}
+                  >
+                    <option>Escolha uma opção</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+
+                <div className="flex-fill ml-1">
+                  <label htmlFor="status" className="form-label">
+                    Status:
+                  </label>
+                  <select
+                    className="form-select"
+                    id="status"
+                    value={status}
+                    onChange={handleStatusChange}
+                  >
+                    <option>Escolha uma opção</option>
+                    <option value="1">To Do</option>
+                    <option value="2">Em Progresso</option>
+                    <option value="3">Bloqueado</option>
+                    <option value="4">Completo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="descricao" className="form-label">
+                  Descrição:
+                </label>
+                <textarea
+                  className="form-control"
+                  id="descricao"
+                  value={descricao}
+                  onChange={handleDescricaoChange}
+                  rows={8}
+                ></textarea>
+              </div>
+
               <div className="modal-footer">
                 <button
                   type="button"
@@ -145,4 +262,4 @@ const ModalProdutoEdit: React.FC<ModalProdutoEditProps> = ({
   );
 };
 
-export default ModalProdutoEdit;
+export default ModalTarefaEdit;

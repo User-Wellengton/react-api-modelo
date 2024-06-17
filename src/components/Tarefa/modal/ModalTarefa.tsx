@@ -322,9 +322,10 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
 
               <div className="mb-3">
                 <label htmlFor="usuarioId" className="form-label">
-                  Cliente:
+                  Usuário:
                 </label>
                 <select
+                  className="form-control"
                   id="usuarioId"
                   value={usuarioSelecionado}
                   onChange={handleUsuarioChange}

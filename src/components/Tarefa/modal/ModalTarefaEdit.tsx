@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Tarefa } from "../../../interfaces/Tarefa/Tarefa";
 import { toast } from "react-toastify";
+import { Cliente } from "../../../interfaces/Cliente/Cliente";
+import clienteService from "../../../services/ClienteService";
 
 interface ModalTarefaEditProps {
   isOpen: boolean;
@@ -23,6 +25,17 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
   const [dataInicial, setDataInicial] = useState("");
   const [dataEntrega, setDataEntrega] = useState("");
   const [status, setStatus] = useState("");
+  const [usuarios, setUsuarios] = useState<Cliente[]>([]);
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState<string>("");
+
+  const recarregarUsuario = useCallback(async () => {
+    try {
+      const usuarios = await clienteService.getAll();
+      setUsuarios(usuarios);
+    } catch (error) {
+      console.error("Erro ao buscar usúarios:", error);
+    }
+  }, []);
 
   useEffect(() => {
     if (tarefa) {
@@ -34,6 +47,10 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
       setPrioridade(tarefa.prioridade.toString());
       setStatus(tarefa.status.toString());
       setDescricao(tarefa.descricao);
+      setUsuarioSelecionado(tarefa.usuarioId.toString());
+    }
+    if (isOpen) {
+      recarregarUsuario();
     }
   }, [tarefa]);
 
@@ -77,6 +94,10 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
     setStatus(event.target.value);
   };
 
+  const handleUsuarioChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setUsuarioSelecionado(event.target.value);
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const dataIni = new Date(dataInicial);
@@ -97,6 +118,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
         prioridade: parseFloat(prioridade),
         status: parseFloat(status),
         descricao: descricao,
+        usuarioId: usuarioSelecionado ? parseInt(usuarioSelecionado, 10) : 1,
       };
       onTarefaEditado(tarefaEditada);
     }
@@ -240,6 +262,29 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                   onChange={handleDescricaoChange}
                   rows={8}
                 ></textarea>
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="usuarioId" className="form-label">
+                  Usuário:
+                </label>
+                <select
+                  className="form-control"
+                  id="usuarioId"
+                  value={usuarioSelecionado}
+                  onChange={handleUsuarioChange}
+                  disabled={!usuarios.length}
+                >
+                  {usuarios.length ? (
+                    usuarios.map((usuario) => (
+                      <option key={usuario.id} value={usuario.id}>
+                        {usuario.nome} {usuario.sobrenome}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="0">Nenhum usuario disponível</option>
+                  )}
+                </select>
               </div>
 
               <div className="modal-footer">

@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { TarefaModal } from "../../../interfaces/Tarefa/TarefaModal";
 import { Tarefa } from "../../../interfaces/Tarefa/Tarefa";
 import ServiceBase from "../../../services/ServiceBase";
 import { toast, Bounce } from "react-toastify";
+import { Cliente } from "../../../interfaces/Cliente/Cliente";
+import clienteService from "../../../services/ClienteService";
 
 interface ModalTarefaProps extends TarefaModal {
   recarregarTarefas: () => void;
@@ -20,6 +22,23 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
   const [dataInicial, setDataInicial] = useState("");
   const [dataEntrega, setDataEntrega] = useState("");
   const [status, setStatus] = useState("");
+  const [usuarios, setUsuarios] = useState<Cliente[]>([]);
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState("");
+
+  const recarregarUsuario = useCallback(async () => {
+    try {
+      const usuarios = await clienteService.getAll();
+      setUsuarios(usuarios);
+    } catch (error) {
+      console.error("Erro ao buscar usúarios:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      recarregarUsuario();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -31,6 +50,7 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
     setDataEntrega("");
     setPrioridade("");
     setStatus("");
+    setUsuarioSelecionado("");
   };
 
   const handleNomeProjetoChange = (
@@ -73,6 +93,10 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
     setStatus(event.target.value);
   };
 
+  const handleUsuarioChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setUsuarioSelecionado(event.target.value);
+  };
+
   const validarTarefa = (tarefa: Tarefa) => {
     const {
       nomeProjeto,
@@ -82,6 +106,7 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
       prioridade,
       status,
       descricao,
+      usuarioId,
     } = tarefa;
 
     const dataIni = new Date(dataInicial);
@@ -94,7 +119,8 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
       !dataEntrega ||
       !prioridade ||
       !status ||
-      !descricao
+      !descricao ||
+      !usuarioId
     ) {
       return "Todos os campos devem ser preenchidos.";
     } else if (dataEnt < dataIni) {
@@ -115,6 +141,7 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
       prioridade: parseFloat(prioridade),
       status: parseFloat(status),
       descricao,
+      usuarioId: usuarioSelecionado ? parseInt(usuarioSelecionado, 10) : 1,
     };
 
     const mensagemErro = validarTarefa(novaTarefa);
@@ -291,6 +318,28 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
                   onChange={handleDescricaoChange}
                   rows={8}
                 ></textarea>
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="usuarioId" className="form-label">
+                  Cliente:
+                </label>
+                <select
+                  id="usuarioId"
+                  value={usuarioSelecionado}
+                  onChange={handleUsuarioChange}
+                  disabled={!usuarios.length}
+                >
+                  {usuarios.length ? (
+                    usuarios.map((usuario) => (
+                      <option key={usuario.id} value={usuario.id}>
+                        {usuario.nome} {usuario.sobrenome}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="0">Nenhum usuario disponível</option>
+                  )}
+                </select>
               </div>
 
               <div className="modal-footer">

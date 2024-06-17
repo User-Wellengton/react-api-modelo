@@ -7,4 +7,5 @@ export interface Tarefa {
   dataEntrega: Date;
   prioridade: number;
   status: number;
+  usuarioId: number;
 }

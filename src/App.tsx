@@ -11,6 +11,8 @@ import Home from "./components/Home/Home";
 import { ToastContainer } from "react-toastify";
 import ClienteListar from "./components/Cliente/ClienteListar";
 import TarefaListar from "./components/Tarefa/TarefaListar";
+import UsuarioListar from "./components/Usuario/UsuarioListar";
+
 
 const App: React.FC = function () {
   return (
@@ -20,6 +22,7 @@ const App: React.FC = function () {
         <Route path="/" element={<Home />} />
         <Route path="/Produto" element={<ProdutoListar />} />
         <Route path="/Cliente" element={<ClienteListar />} />
+        <Route path="/Usuario" element={<UsuarioListar />} />
         <Route path="/Tarefa" element={<TarefaListar />} />
       </Routes>
       <ToastContainer />

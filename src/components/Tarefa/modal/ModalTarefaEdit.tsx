@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Tarefa } from "../../../interfaces/Tarefa/Tarefa";
 import { toast } from "react-toastify";
-import { Cliente } from "../../../interfaces/Cliente/Cliente";
-import clienteService from "../../../services/ClienteService";
+import { Usuario } from "../../../interfaces/Usuario/Usuario";
+import usuarioService from "../../../services/UsuarioService";
 
 interface ModalTarefaEditProps {
   isOpen: boolean;
@@ -25,12 +25,12 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
   const [dataInicial, setDataInicial] = useState("");
   const [dataEntrega, setDataEntrega] = useState("");
   const [status, setStatus] = useState("");
-  const [usuarios, setUsuarios] = useState<Cliente[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState<string>("");
 
   const recarregarUsuario = useCallback(async () => {
     try {
-      const usuarios = await clienteService.getAll();
+      const usuarios = await usuarioService.getAll();
       setUsuarios(usuarios);
     } catch (error) {
       console.error("Erro ao buscar usúarios:", error);
@@ -278,7 +278,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                   {usuarios.length ? (
                     usuarios.map((usuario) => (
                       <option key={usuario.id} value={usuario.id}>
-                        {usuario.nome} {usuario.sobrenome}
+                        {usuario.nome}
                       </option>
                     ))
                   ) : (

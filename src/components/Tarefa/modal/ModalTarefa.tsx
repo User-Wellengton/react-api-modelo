@@ -3,8 +3,8 @@ import { TarefaModal } from "../../../interfaces/Tarefa/TarefaModal";
 import { Tarefa } from "../../../interfaces/Tarefa/Tarefa";
 import ServiceBase from "../../../services/ServiceBase";
 import { toast, Bounce } from "react-toastify";
-import { Cliente } from "../../../interfaces/Cliente/Cliente";
-import clienteService from "../../../services/ClienteService";
+import { Usuario } from "../../../interfaces/Usuario/Usuario";
+import usuarioService from "../../../services/UsuarioService";
 
 interface ModalTarefaProps extends TarefaModal {
   recarregarTarefas: () => void;
@@ -22,12 +22,12 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
   const [dataInicial, setDataInicial] = useState("");
   const [dataEntrega, setDataEntrega] = useState("");
   const [status, setStatus] = useState("");
-  const [usuarios, setUsuarios] = useState<Cliente[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState("");
 
   const recarregarUsuario = useCallback(async () => {
     try {
-      const usuarios = await clienteService.getAll();
+      const usuarios = await usuarioService.getAll();
       setUsuarios(usuarios);
     } catch (error) {
       console.error("Erro ao buscar usúarios:", error);
@@ -334,7 +334,7 @@ const ModalTarefa: React.FC<ModalTarefaProps> = ({
                   {usuarios.length ? (
                     usuarios.map((usuario) => (
                       <option key={usuario.id} value={usuario.id}>
-                        {usuario.nome} {usuario.sobrenome}
+                        {usuario.nome}
                       </option>
                     ))
                   ) : (

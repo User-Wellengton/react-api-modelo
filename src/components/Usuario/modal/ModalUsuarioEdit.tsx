@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Usuario } from "../../../interfaces/Usuario/Usuario";
+import { toast, ToastContainer } from "react-toastify";
 
 interface ModalUsuarioEditProps {
   isOpen: boolean;
@@ -15,36 +16,44 @@ const ModalUsuarioEdit: React.FC<ModalUsuarioEditProps> = ({
   onUsuarioEditado,
 }) => {
   const [id, setId] = useState<number | undefined>(undefined);
-  const [nome, setNome] = useState("");  
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
-  
+  const [editavel, setEditavel] = useState(false); // estado para controlar se os campos estão editáveis
 
   useEffect(() => {
     if (usuario) {
       setId(usuario.id);
-      setNome(usuario.nome);      
-      setEmail(usuario.email);      
+      setNome(usuario.nome);
+      setEmail(usuario.email);
     }
   }, [usuario]);
 
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNome(event.target.value);
+    if (editavel) {
+      setNome(event.target.value);
+    }
   };
 
-    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
-  }; 
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (editavel) {
+      setEmail(event.target.value);
+    }
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (usuario) {
       const usuarioEditado: Usuario = {
         ...usuario,
-        nome: nome,        
-        email: email,        
+        nome: nome,
+        email: email,
       };
       onUsuarioEditado(usuarioEditado);
     }
+  };
+
+  const handleEditar = () => {
+    setEditavel(!editavel); // alterna o modo de edição
   };
 
   return (
@@ -57,7 +66,7 @@ const ModalUsuarioEdit: React.FC<ModalUsuarioEditProps> = ({
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Editar Usuario</h5>
+            <h5 className="modal-title">Editar Usuário</h5>
             <button
               type="button"
               className="btn-close"
@@ -89,9 +98,10 @@ const ModalUsuarioEdit: React.FC<ModalUsuarioEditProps> = ({
                   id="nome"
                   value={nome}
                   onChange={handleNomeChange}
+                  readOnly={!editavel}
                 />
               </div>
-              
+
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">
                   Email:
@@ -102,19 +112,39 @@ const ModalUsuarioEdit: React.FC<ModalUsuarioEditProps> = ({
                   id="email"
                   value={email}
                   onChange={handleEmailChange}
+                  readOnly={!editavel}
                 />
               </div>
-              
+
               <div className="modal-footer">
+                {!editavel ? (
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleEditar}
+                  >
+                    Editar
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={handleEditar}
+                    >
+                      Cancelar
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                      Salvar
+                    </button>
+                  </>
+                )}
                 <button
                   type="button"
                   className="btn btn-secondary"
                   onClick={onClose}
                 >
                   Fechar
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Salvar
                 </button>
               </div>
             </form>

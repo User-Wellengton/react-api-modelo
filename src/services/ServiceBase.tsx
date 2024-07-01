@@ -44,7 +44,10 @@ export default class ServiceBase<T> {
     return response.data;
   };
 
-  delete = async (id: string): Promise<void> => {
-    await Api.delete(`/${this.resource}?id=${id}`);
+  delete = async (id: string): Promise<AxiosResponse<any>> => {
+    const response: AxiosResponse<any> = await Api.delete(
+      `/${this.resource}?id=${id}`
+    );
+    return response.data;
   };
 }

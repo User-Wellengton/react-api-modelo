@@ -14,30 +14,27 @@ const ModalUsuario: React.FC<ModalUsuarioProps> = ({
   recarregarUsuarios,
 }) => {
   const [id, setId] = useState<number | undefined>(undefined);
-  const [nome, setNome] = useState(""); 
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
-  
 
   if (!isOpen) return null;
 
   const limparCampos = () => {
     setNome("");
-    setNome("");    
-    setEmail("");    
+    setEmail("");
   };
 
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNome(event.target.value);
   };
 
-  
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
-  
+
   const validarUsuario = (usuario: Usuario) => {
-    const { nome,  email } = usuario;
-    if (!nome ||  !email) {
+    const { nome, email } = usuario;
+    if (!nome || !email) {
       throw new Error("Todos os campos devem ser preenchidos");
     }
   };
@@ -46,8 +43,8 @@ const ModalUsuario: React.FC<ModalUsuarioProps> = ({
     event.preventDefault();
     const novoUsuario: Usuario = {
       id: 0,
-      nome,      
-      email,      
+      nome,
+      email,
     };
     try {
       validarUsuario(novoUsuario);
@@ -114,7 +111,7 @@ const ModalUsuario: React.FC<ModalUsuarioProps> = ({
                   onChange={handleNomeChange}
                 />
               </div>
-              
+
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">
                   Email:
@@ -127,7 +124,7 @@ const ModalUsuario: React.FC<ModalUsuarioProps> = ({
                   onChange={handleEmailChange}
                 />
               </div>
-              
+
               <div className="modal-footer">
                 <button
                   type="button"

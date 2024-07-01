@@ -1,3 +1,4 @@
+import BemVindo from "./BemVindo/bemVindo";
 import Fade from "./Carousel/Fade";
 
 const Home = () => {
@@ -8,10 +9,8 @@ const Home = () => {
 
   return (
     <div>
-      <div style={carouselContainerStyle}>
-        <Fade />
-      </div>
-      <h1>Primeira página</h1>
+      <div style={carouselContainerStyle}>{/* <Fade /> */}</div>
+      <BemVindo />
     </div>
   );
 };

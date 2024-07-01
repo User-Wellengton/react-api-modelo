@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tarefa } from "../../interfaces/Tarefa/Tarefa";
+import { AxiosResponse } from "axios";
 
 import "./TarefaListar.css";
 import ModalTarefa from "./modal/ModalTarefa";
@@ -60,11 +61,14 @@ const TarefaListar: React.FC = () => {
   const handleConfirmarExclusao = async () => {
     if (tarefaSelecionado) {
       try {
+        // Chama o serviço de exclusão da tarefa
         await tarefaService.delete(tarefaSelecionado.id.toString());
+
+        // Ações após a exclusão bem-sucedida
         await recarregarTarefas();
         fecharModalExclusao();
 
-        toast.success("tarefa excluída com SUCESSO!", {
+        toast.success("Tarefa excluída com sucesso!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -75,10 +79,14 @@ const TarefaListar: React.FC = () => {
           theme: "light",
           transition: Bounce,
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error("Erro ao excluir uma Tarefa:", error);
 
-        toast.error("Ocorreu um erro ao excluir a Tarefa", {
+        const errorMessage =
+          error.response?.data?.message ||
+          "Ocorreu um erro ao excluir a Tarefa";
+
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -117,7 +125,7 @@ const TarefaListar: React.FC = () => {
       await recarregarTarefas();
       fecharModalEdicao();
 
-      toast.success("tarefa atualizada com SUCESSO!", {
+      toast.success("Tarefa atualizada com sucesso.", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -131,7 +139,7 @@ const TarefaListar: React.FC = () => {
     } catch (error) {
       console.error("Erro ao editar a Tarefa:", error);
 
-      toast.error("Ocorreu um erro ao atualizar a Tarefa", {
+      toast.error("Ocorreu um erro ao atualizar a tarefa", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -154,18 +162,20 @@ const TarefaListar: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (nomePesquisado.trim() === "") {
-      console.log("Nome da Tarefa não pode estar vazio.");
+      toast.error("Nome da Tarefa não pode estar vazio.");
       return;
     }
     try {
       const tarefaPesquisada = await tarefaService.getName(nomePesquisado);
       if (tarefaPesquisada) {
         setTarefas([tarefaPesquisada]);
+        toast.success("Tarefa encontrada com sucesso!");
       } else {
-        console.log("Nenhuma tarefa encontrada.");
+        toast.warning("Nenhuma tarefa encontrada.");
       }
     } catch (error) {
       console.error("Erro ao buscar tarefas:", error);
+      toast.error("Erro ao buscar tarefas.");
     }
   };
 
@@ -229,7 +239,7 @@ const TarefaListar: React.FC = () => {
                     className="btn btn-primary"
                     onClick={() => abrirModalEdicao(tarefa)}
                   >
-                    Editar
+                    Visualizar
                   </button>
                   <button
                     className="btn btn-danger"

@@ -8,7 +8,7 @@ interface ModalTarefaEditProps {
   isOpen: boolean;
   onClose: () => void;
   tarefa: Tarefa | null;
-  onTarefaEditado: (tarefa: Tarefa) => void;
+  onTarefaEditado: (tarefaEditada: Tarefa) => void;
 }
 
 const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
@@ -28,12 +28,14 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState<string>("");
 
+  const [editavel, setEditavel] = useState(false); // estado para controlar se os campos estão editáveis
+
   const recarregarUsuario = useCallback(async () => {
     try {
       const usuarios = await usuarioService.getAll();
       setUsuarios(usuarios);
     } catch (error) {
-      console.error("Erro ao buscar usúarios:", error);
+      console.error("Erro ao buscar usuários:", error);
     }
   }, []);
 
@@ -52,50 +54,66 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
     if (isOpen) {
       recarregarUsuario();
     }
-  }, [tarefa]);
+  }, [tarefa, isOpen, recarregarUsuario]);
 
   const handleNomeProjetoChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setNomeProjeto(event.target.value);
+    if (editavel) {
+      setNomeProjeto(event.target.value);
+    }
   };
 
   const handleNomeTarefaChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setNomeTarefa(event.target.value);
+    if (editavel) {
+      setNomeTarefa(event.target.value);
+    }
   };
 
   const handleDataInicialChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setDataInicial(event.target.value);
+    if (editavel) {
+      setDataInicial(event.target.value);
+    }
   };
 
   const handleDataEntregaChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setDataEntrega(event.target.value);
+    if (editavel) {
+      setDataEntrega(event.target.value);
+    }
   };
 
   const handleDescricaoChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setDescricao(event.target.value);
+    if (editavel) {
+      setDescricao(event.target.value);
+    }
   };
 
   const handlePrioridadeChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setPrioridade(event.target.value);
+    if (editavel) {
+      setPrioridade(event.target.value);
+    }
   };
 
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatus(event.target.value);
+    if (editavel) {
+      setStatus(event.target.value);
+    }
   };
 
   const handleUsuarioChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setUsuarioSelecionado(event.target.value);
+    if (editavel) {
+      setUsuarioSelecionado(event.target.value);
+    }
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -122,6 +140,10 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
       };
       onTarefaEditado(tarefaEditada);
     }
+  };
+
+  const handleEditar = () => {
+    setEditavel(!editavel); // alterna o modo de edição
   };
 
   return (
@@ -167,6 +189,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                   id="nomeProjeto"
                   value={nomeProjeto}
                   onChange={handleNomeProjetoChange}
+                  readOnly={!editavel}
                 />
               </div>
 
@@ -180,6 +203,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                   id="nomeTarefa"
                   value={nomeTarefa}
                   onChange={handleNomeTarefaChange}
+                  readOnly={!editavel}
                 />
               </div>
 
@@ -195,6 +219,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                     name="dataInicial"
                     value={dataInicial}
                     onChange={handleDataInicialChange}
+                    readOnly={!editavel}
                   />
                 </div>
                 <div className="flex-fill ml-1">
@@ -208,6 +233,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                     name="dataEntrega"
                     value={dataEntrega}
                     onChange={handleDataEntregaChange}
+                    readOnly={!editavel}
                   />
                 </div>
               </div>
@@ -222,6 +248,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                     id="prioridade"
                     value={prioridade}
                     onChange={handlePrioridadeChange}
+                    disabled={!editavel}
                   >
                     <option>Escolha uma opção</option>
                     <option value="1">1</option>
@@ -241,6 +268,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                     id="status"
                     value={status}
                     onChange={handleStatusChange}
+                    disabled={!editavel}
                   >
                     <option>Escolha uma opção</option>
                     <option value="1">To Do</option>
@@ -261,6 +289,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                   value={descricao}
                   onChange={handleDescricaoChange}
                   rows={8}
+                  readOnly={!editavel}
                 ></textarea>
               </div>
 
@@ -273,7 +302,7 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
                   id="usuarioId"
                   value={usuarioSelecionado}
                   onChange={handleUsuarioChange}
-                  disabled={!usuarios.length}
+                  disabled={!editavel || !usuarios.length}
                 >
                   {usuarios.length ? (
                     usuarios.map((usuario) => (
@@ -288,15 +317,34 @@ const ModalTarefaEdit: React.FC<ModalTarefaEditProps> = ({
               </div>
 
               <div className="modal-footer">
+                {!editavel ? (
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleEditar}
+                  >
+                    Editar
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={handleEditar}
+                    >
+                      Cancelar
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                      Salvar
+                    </button>
+                  </>
+                )}
                 <button
                   type="button"
                   className="btn btn-secondary"
                   onClick={onClose}
                 >
                   Fechar
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Salvar
                 </button>
               </div>
             </form>

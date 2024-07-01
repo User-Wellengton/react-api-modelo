@@ -6,6 +6,7 @@ import { toast, Bounce } from "react-toastify";
 import ModalUsuario from "./modal/ModalUsuario";
 import ModalUsuarioDelete from "./modal/ModalUsuarioDelete";
 import ModalUsuarioEdit from "./modal/ModalUsuarioEdit";
+import { AxiosResponse } from "axios";
 
 const UsuarioListar: React.FC = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
@@ -44,11 +45,19 @@ const UsuarioListar: React.FC = () => {
   const handleConfirmarExclusao = async () => {
     if (usuarioSelecionado) {
       try {
-        await usuarioService.delete(usuarioSelecionado.id.toString());
+        const response: AxiosResponse<any> = await usuarioService.delete(
+          usuarioSelecionado.id.toString()
+        );
+
+        console.log("Response do back-end:", response); // Log para verificar a resposta completa
+
+        const responseMessage =
+          response.data || "Usuário excluído com sucesso!";
+
         await recarregarUsuarios();
         fecharModalExclusao();
 
-        toast.success("Usuario excluído com SUCESSO!", {
+        toast.success(responseMessage, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -59,10 +68,14 @@ const UsuarioListar: React.FC = () => {
           theme: "light",
           transition: Bounce,
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error("Erro ao excluir usuário:", error);
+        console.log("Erro completo:", error.response); // Log para verificar a resposta de erro completa
 
-        toast.error("Ocorreu um erro ao excluir o Usuario", {
+        const errorMessage =
+          error.response?.data || "Ocorreu um erro ao excluir o Usuário";
+
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -98,10 +111,11 @@ const UsuarioListar: React.FC = () => {
   const handleUsuarioEditado = async (usuario: Usuario) => {
     try {
       await usuarioService.update(usuario.id.toString(), usuario);
+
       await recarregarUsuarios();
       fecharModalEdicao();
 
-      toast.success("Usuario atualizado com SUCESSO!", {
+      toast.success("Usuário atualizado com sucesso!", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -112,10 +126,14 @@ const UsuarioListar: React.FC = () => {
         theme: "light",
         transition: Bounce,
       });
-    } catch (error) {
-      console.error("Erro ao editar usuario:", error);
+    } catch (error: any) {
+      console.error("Erro ao editar usuário:", error);
 
-      toast.error("Ocorreu um erro ao atualizar o Usuario", {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Ocorreu um erro ao atualizar o Usuário";
+
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -138,18 +156,20 @@ const UsuarioListar: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (nomePesquisado.trim() === "") {
-      console.log("Nome do usuário não pode estar vazio.");
+      toast.error("Nome do usuário não pode estar vazio.");
       return;
     }
     try {
       const usuarioPesquisado = await usuarioService.getName(nomePesquisado);
       if (usuarioPesquisado) {
         setUsuarios([usuarioPesquisado]);
+        toast.success("Usuário encontrado com sucesso!");
       } else {
-        console.log("Nenhum usuário encontrado.");
+        toast.warning("Nenhum usuário encontrado.");
       }
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
+      toast.error("Erro ao buscar usuários.");
     }
   };
 
@@ -187,7 +207,7 @@ const UsuarioListar: React.FC = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Nome</th>
-              <th scope="col">Email</th>              
+              <th scope="col">Email</th>
               <th scope="col">Ações</th>
             </tr>
           </thead>
@@ -195,16 +215,14 @@ const UsuarioListar: React.FC = () => {
             {usuarios.map((usuario) => (
               <tr key={usuario.id}>
                 <td>{usuario.id}</td>
-                <td>
-                  {usuario.nome}                  
-                </td>
-                <td>{usuario.email}</td>                
+                <td>{usuario.nome}</td>
+                <td>{usuario.email}</td>
                 <td>
                   <button
                     className="btn btn-primary"
                     onClick={() => abrirModalEdicao(usuario)}
                   >
-                    Editar
+                    Visualizar
                   </button>
                   <button
                     className="btn btn-danger"
